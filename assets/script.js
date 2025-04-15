@@ -1,30 +1,27 @@
-// assets/script.js
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-function gerarIdAleatorio() {
-    return Math.random().toString(36).substring(2, 10);
-}
+// Referência à coleção no Firestore
+const denunciasRef = collection(db, "denuncias");
 
-function gerarCodigoAcesso() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
+// Obtendo o formulário e capturando o evento de envio
+const form = document.getElementById("form-denuncia");
 
-document.getElementById('denunciaForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const denunciaTexto = document.getElementById('denuncia').value;
-    const denunciaId = gerarIdAleatorio();
-    const acessoCodigo = gerarCodigoAcesso();
+  const denunciaData = {
+    nome: form.nome.value,
+    descricao: form.descricao.value,
+    codigoAcesso: form.codigoAcesso.value,
+    data: new Date(),
+  };
 
-    db.collection("denuncias").doc(denunciaId).set({
-        texto: denunciaTexto,
-        id: denunciaId,
-        senha: acessoCodigo,
-        resposta: ""
-    }).then(() => {
-        document.getElementById('denunciaId').textContent = denunciaId;
-        document.getElementById('acessoCodigo').textContent = acessoCodigo;
-        document.getElementById('id-info').style.display = 'block';
-    }).catch((error) => {
-        alert("Erro ao enviar denúncia: " + error);
-    });
+  try {
+    // Enviando a denúncia para o Firestore
+    await addDoc(denunciasRef, denunciaData);
+    alert("Denúncia enviada com sucesso!");
+    form.reset(); // Limpa o formulário
+  } catch (e) {
+    alert("Erro ao enviar denúncia: " + e.message);
+  }
 });
