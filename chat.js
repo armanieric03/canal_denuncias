@@ -1,49 +1,96 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Anônimo</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+    .message { margin-bottom: 8px; }
+    .denunciante { color: blue; }
+    .comissao { color: green; }
+  </style>
+</head>
+<body>
+  <h2>Chat Anônimo</h2>
+  <div id="messages"></div>
+  <textarea id="mensagem" rows="3" style="width:100%" placeholder="Digite sua mensagem..."></textarea><br>
+  <button onclick="enviarMensagem()">Enviar</button>
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDDjD6VMIRxgDq13yXjMYeYI2b7-QqqdVI",
-  authDomain: "canal-denuncias-poli26.firebaseapp.com",
-  databaseURL: "https://canal-denuncias-poli26-default-rtdb.firebaseio.com",
-  projectId: "canal-denuncias-poli26",
-  storageBucket: "canal-denuncias-poli26.firebasestorage.app",
-  messagingSenderId: "102848286523",
-  appId: "1:102848286523:web:4b539fe5ec3e15d7e3311e"
-};
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      onChildAdded,
+      push,
+      get
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Inicializando o Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const database = firebase.database(app);
-
-// Função para enviar mensagem
-function sendMessage() {
-  const message = document.getElementById('sendMessage').value;
-  if (message.trim() !== '') {
-    const messageId = Date.now(); // Usando timestamp como ID único
-    const newMessage = {
-      id: messageId,
-      text: message,
-      timestamp: new Date().toISOString(),
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      databaseURL: "https://SEU_PROJETO.firebaseio.com",
+      projectId: "SEU_PROJETO",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+      appId: "SEU_APP_ID"
     };
 
-    // Enviar mensagem para o Firebase
-    database.ref('messages/' + messageId).set(newMessage);
-    document.getElementById('sendMessage').value = ''; // Limpar campo de mensagem
-  }
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-// Função para ler mensagens do Firebase em tempo real
-database.ref('messages').on('child_added', function(snapshot) {
-  const message = snapshot.val();
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message');
-  messageElement.innerText = `${message.text} (enviado em ${new Date(message.timestamp).toLocaleString()})`;
-  document.getElementById('messages').appendChild(messageElement);
-  document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-});
+    const codigoChat = sessionStorage.getItem("codigoChat");
+    const senhaInformada = sessionStorage.getItem("senha");
+    const mensagensRef = ref(db, "chats/" + codigoChat + "/mensagens");
+
+    const chatRef = ref(db, "chats/" + codigoChat);
+    let tipoUsuario = null;
+
+    // Verifica a senha
+    get(chatRef).then(snapshot => {
+      if (!snapshot.exists()) {
+        alert("Chat não encontrado.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      const data = snapshot.val();
+      if (senhaInformada === data.senhaDenunciante) {
+        tipoUsuario = "Denunciante";
+      } else if (senhaInformada === data.senhaComissao) {
+        tipoUsuario = "Comissão";
+      } else {
+        alert("Senha incorreta.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      // Carrega as mensagens
+      onChildAdded(mensagensRef, snapshot => {
+        const msg = snapshot.val();
+        const msgEl = document.createElement("div");
+        msgEl.classList.add("message");
+        msgEl.classList.add(msg.autor === "Denunciante" ? "denunciante" : "comissao");
+        msgEl.textContent = `${msg.autor}: ${msg.texto}`;
+        document.getElementById("messages").appendChild(msgEl);
+        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+      });
+    });
+
+    // Envia mensagem
+    window.enviarMensagem = function () {
+      const texto = document.getElementById("mensagem").value.trim();
+      if (!texto || !tipoUsuario) return;
+
+      push(mensagensRef, {
+        texto,
+        autor: tipoUsuario,
+        timestamp: Date.now()
+      });
+
+      document.getElementById("mensagem").value = "";
+    };
+  </script>
+</body>
+</html>
