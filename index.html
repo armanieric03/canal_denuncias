@@ -8,8 +8,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    (function() {
-      emailjs.init("34Qr07ENkW64L11KM"); // Substitua pela sua Public Key do EmailJS
+    (function () {
+      emailjs.init("34Qr07ENkW64L11KM"); // ⬅️ Substitua pela sua public key do EmailJS
     })();
   </script>
   <style>
@@ -18,8 +18,7 @@
     label { display: block; margin-top: 10px; }
     input { width: 100%; padding: 5px; margin-top: 5px; }
     button { margin-top: 15px; padding: 10px 15px; }
-    #dadosChat p { margin: 5px 0; }
-    .copiable { cursor: pointer; color: blue; text-decoration: underline; }
+    .copiable { color: blue; text-decoration: underline; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -29,10 +28,10 @@
   <div class="box">
     <h2>Criar novo chat</h2>
     <button id="btnCriar">Criar um novo chat</button>
-    <div id="dadosChat" style="display:none;">
+    <div id="dadosChat" style="display:none; margin-top: 10px;">
       <p><strong>Código do Chat:</strong> <span id="codigoGerado" class="copiable"></span></p>
       <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante" class="copiable"></span></p>
-      <p><strong>Senha da Comissão:</strong> Enviada por e-mail</p>
+      <p><strong>Senha da Comissão:</strong> enviada por e-mail</p>
     </div>
   </div>
 
