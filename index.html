@@ -17,15 +17,20 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
+    
+    // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_PROJETO.firebaseapp.com",
-      databaseURL: "https://SEU_PROJETO.firebaseio.com",
-      projectId: "SEU_PROJETO",
-      storageBucket: "SEU_PROJETO.appspot.com",
-      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-      appId: "SEU_APP_ID"
+      apiKey: "AIzaSyDDjD6VMIRxgDq13yXjMYeYI2b7-QqqdVI",
+      authDomain: "canal-denuncias-poli26.firebaseapp.com",
+      databaseURL: "https://canal-denuncias-poli26-default-rtdb.firebaseio.com",
+      projectId: "canal-denuncias-poli26",
+      storageBucket: "canal-denuncias-poli26.firebasestorage.app",
+      messagingSenderId: "102848286523",
+      appId: "1:102848286523:web:4b539fe5ec3e15d7e3311e"
     };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
