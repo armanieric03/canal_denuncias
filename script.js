@@ -1,19 +1,16 @@
 // script.js
 
-// Referência ao Firestore
-const db = getFirestore();
+// Referência à coleção de denúncias no Firestore
+const denunciasRef = collection(window.db, "denuncias");  // Usando 'window.db' para acessar a instância global
 
-// Referência à coleção de denúncias
-const denunciasRef = collection(db, "denuncias");
-
-// Pegando o formulário
+// Pegando o formulário de envio
 const form = document.getElementById("form-denuncia");
 
-// Adicionando evento de submit ao formulário
+// Adicionando o evento de submit ao formulário
 form.addEventListener("submit", async (e) => {
   e.preventDefault();  // Impede o comportamento padrão de recarregar a página
 
-  // Dados da denúncia
+  // Criando o objeto de dados da denúncia
   const denunciaData = {
     nome: form.nome.value,
     descricao: form.descricao.value,
@@ -22,7 +19,7 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    // Enviar os dados para o Firestore
+    // Enviando os dados para o Firestore
     await addDoc(denunciasRef, denunciaData);
     alert("Denúncia enviada com sucesso!");
     form.reset();  // Limpa os campos do formulário
