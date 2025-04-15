@@ -9,36 +9,19 @@
 
   <button onclick="criarChat()">Criar novo chat</button>
   <br><br>
+
   <input type="text" id="codigoChat" placeholder="Código do chat existente">
   <input type="text" id="senha" placeholder="Senha de acesso">
   <button onclick="entrarChat()">Entrar</button>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyDDjD6VMIRxgDq13yXjMYeYI2b7-QqqdVI",
-      authDomain: "canal-denuncias-poli26.firebaseapp.com",
-      databaseURL: "https://canal-denuncias-poli26-default-rtdb.firebaseio.com",
-      projectId: "canal-denuncias-poli26",
-      storageBucket: "canal-denuncias-poli26.firebasestorage.app",
-      messagingSenderId: "102848286523",
-      appId: "1:102848286523:web:4b539fe5ec3e15d7e3311e"
-    };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    import { db } from "./firebase-config.js";
+    import { ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
     function gerarSenha() {
       return Math.random().toString(36).slice(-6);
     }
 
-    // ✅ Esta função precisa estar no window
     window.criarChat = async function () {
       const codigo = Date.now().toString();
       const senhaDenunciante = gerarSenha();
