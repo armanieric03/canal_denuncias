@@ -8,7 +8,20 @@
   <h2>Canal de Denúncias Anônimo</h2>
 
   <button id="btnCriar">Criar novo chat</button>
-  <br><br>
+
+  <div id="dadosChat" style="display:none; margin-top: 20px;">
+    <p><strong>Código do Chat:</strong> <span id="codigoGerado"></span>
+      <button onclick="copiarTexto('codigoGerado')">Copiar</button>
+    </p>
+    <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante"></span>
+      <button onclick="copiarTexto('senhaDenunciante')">Copiar</button>
+    </p>
+    <p><strong>Senha da Comissão:</strong> <span id="senhaComissao"></span>
+      <button onclick="copiarTexto('senhaComissao')">Copiar</button>
+    </p>
+  </div>
+
+  <hr>
 
   <input type="text" id="codigoChat" placeholder="Código do chat existente" />
   <input type="text" id="senha" placeholder="Senha de acesso" />
@@ -24,19 +37,20 @@
 
     async function criarChat() {
       const codigo = Date.now().toString();
-      const senhaDenunciante = gerarSenha();
-      const senhaComissao = gerarSenha();
+      const senha1 = gerarSenha();
+      const senha2 = gerarSenha();
 
-      const refChat = ref(db, "chats/" + codigo);
-      await set(refChat, {
-        senhaDenunciante,
-        senhaComissao,
+      await set(ref(db, "chats/" + codigo), {
+        senhaDenunciante: senha1,
+        senhaComissao: senha2,
         mensagens: []
       });
 
-      alert(
-        `Chat criado com sucesso!\n\nCódigo do chat: ${codigo}\n\nSenha do denunciante: ${senhaDenunciante}\nSenha da comissão: ${senhaComissao}`
-      );
+      // mostra os dados na tela
+      document.getElementById("dadosChat").style.display = "block";
+      document.getElementById("codigoGerado").textContent = codigo;
+      document.getElementById("senhaDenunciante").textContent = senha1;
+      document.getElementById("senhaComissao").textContent = senha2;
     }
 
     function entrarChat() {
@@ -52,9 +66,16 @@
       }
     }
 
-    // ✅ associa os botões corretamente
+    window.copiarTexto = function (id) {
+      const texto = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Copiado: " + texto);
+      });
+    };
+
     document.getElementById("btnCriar").addEventListener("click", criarChat);
     document.getElementById("btnEntrar").addEventListener("click", entrarChat);
   </script>
 </body>
+
 </html>
