@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Denúncias Recebidas</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+    <h1>Denúncias Recebidas</h1>
+    <div id="listaDenuncias"></div>
+
+    <script>
+        db.collection("denuncias").get().then((querySnapshot) => {
+            const container = document.getElementById("listaDenuncias");
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const bloco = document.createElement("div");
+                bloco.innerHTML = `
+                    <hr>
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>Texto:</strong> ${data.texto}</p>
+                    <p><strong>Senha:</strong> ${data.senha}</p>
+                    <p><strong>Resposta:</strong> ${data.resposta || "(Sem resposta)"}</p>
+                    <textarea id="resposta-${data.id}" rows="3" placeholder="Digite resposta..."></textarea>
+                    <button onclick="responder('${data.id}')">Enviar resposta</button>
+                `;
+                container.appendChild(bloco);
+            });
+        });
+
+        function responder(id) {
+            const resposta = document.getElementById(`resposta-${id}`).value;
+            db.collection("denuncias").doc(id).update({ resposta });
+            alert("Resposta enviada!");
+        }
+    </script>
+</body>
+</html>
