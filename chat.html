@@ -1,79 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat Anônimo</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <style>
-    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-    #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
-    .message { margin-bottom: 8px; }
-    .denunciante { color: blue; }
-    .comissao { color: green; }
+    body { font-family: sans-serif; padding: 20px; }
+    #mensagens { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
+    #mensagens div { margin-bottom: 5px; }
+    #chatContainer { display: none; }
   </style>
 </head>
 <body>
-  <h2>Chat Anônimo</h2>
-  <div id="messages"></div>
-  <textarea id="mensagem" rows="3" style="width:100%" placeholder="Digite sua mensagem..."></textarea><br>
-  <button onclick="enviarMensagem()">Enviar</button>
+  <h1>Chat Anônimo</h1>
 
+  <div id="chatContainer">
+    <div id="mensagens"></div>
+    <textarea id="mensagem" placeholder="Digite sua mensagem"></textarea>
+    <br/>
+    <button id="enviar">Enviar</button>
+  </div>
+
+  <div id="erro"></div>
+
+  <script src="firebase-config.js" type="module"></script>
   <script type="module">
-    import { db } from "./firebase-config.js";
-    import {
-      ref,
-      onChildAdded,
-      push,
-      get
-    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { db } from './firebase-config.js';
 
-    const codigoChat = sessionStorage.getItem("codigoChat");
-    const senhaInformada = sessionStorage.getItem("senha");
-    const mensagensRef = ref(db, "chats/" + codigoChat + "/mensagens");
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatId = urlParams.get("chat");
+    const senha = urlParams.get("senha");
 
-    const chatRef = ref(db, "chats/" + codigoChat);
-    let tipoUsuario = null;
+    const mensagensDiv = document.getElementById("mensagens");
+    const container = document.getElementById("chatContainer");
+    const erroDiv = document.getElementById("erro");
 
-    get(chatRef).then(snapshot => {
-      if (!snapshot.exists()) {
-        alert("Chat não encontrado.");
-        window.location.href = "index.html";
-        return;
-      }
+    if (!chatId || !senha) {
+      erroDiv.textContent = "Código do chat ou senha não informados.";
+    } else {
+      const chatRef = ref(db, "chats/" + chatId);
 
-      const data = snapshot.val();
-      if (senhaInformada === data.senhaDenunciante) {
-        tipoUsuario = "Denunciante";
-      } else if (senhaInformada === data.senhaComissao) {
-        tipoUsuario = "Comissão";
-      } else {
-        alert("Senha incorreta.");
-        window.location.href = "index.html";
-        return;
-      }
+      get(chatRef).then(snapshot => {
+        if (!snapshot.exists()) {
+          erroDiv.textContent = "Chat não encontrado.";
+        } else {
+          const data = snapshot.val();
+          if (senha !== data.senhaDenunciante && senha !== data.senhaComissao) {
+            erroDiv.textContent = "Senha incorreta.";
+          } else {
+            container.style.display = "block";
+            const mensagensRef = ref(db, "chats/" + chatId + "/mensagens");
+            onValue(mensagensRef, snapshot => {
+              mensagensDiv.innerHTML = "";
+              snapshot.forEach(msg => {
+                const div = document.createElement("div");
+                div.textContent = msg.val().texto;
+                mensagensDiv.appendChild(div);
+              });
+              mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            });
 
-      onChildAdded(mensagensRef, snapshot => {
-        const msg = snapshot.val();
-        const msgEl = document.createElement("div");
-        msgEl.classList.add("message");
-        msgEl.classList.add(msg.autor === "Denunciante" ? "denunciante" : "comissao");
-        msgEl.textContent = `${msg.autor}: ${msg.texto}`;
-        document.getElementById("messages").appendChild(msgEl);
-        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+            document.getElementById("enviar").onclick = () => {
+              const texto = document.getElementById("mensagem").value;
+              if (texto.trim()) {
+                push(mensagensRef, { texto });
+                document.getElementById("mensagem").value = "";
+              }
+            };
+          }
+        }
       });
-    });
-
-    window.enviarMensagem = function () {
-      const texto = document.getElementById("mensagem").value.trim();
-      if (!texto || !tipoUsuario) return;
-
-      push(mensagensRef, {
-        texto,
-        autor: tipoUsuario,
-        timestamp: Date.now()
-      });
-
-      document.getElementById("mensagem").value = "";
-    };
+    }
   </script>
 </body>
 </html>
