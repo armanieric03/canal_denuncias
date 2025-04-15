@@ -30,7 +30,6 @@ form.addEventListener("submit", async (e) => {
 
   // Criando o objeto de dados da denúncia
   const denunciaData = {
-    nome: form.nome.value,
     descricao: form.descricao.value,
     codigoDenuncia: codigoDenuncia,
     codigoAcesso: codigoAcesso,
