@@ -1,6 +1,4 @@
-// script.js
-
-// Função para gerar um código aleatório
+// Função para gerar um código aleatório de tamanho especificado
 function gerarCodigo(tamanho = 8) {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let codigo = '';
@@ -10,10 +8,28 @@ function gerarCodigo(tamanho = 8) {
   return codigo;
 }
 
-// Referência ao Firestore
-const db = getFirestore();
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Referência à coleção de denúncias no Firestore
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDDjD6VMIRxgDq13yXjMYeYI2b7-QqqdVI",
+  authDomain: "canal-denuncias-poli26.firebaseapp.com",
+  databaseURL: "https://canal-denuncias-poli26-default-rtdb.firebaseio.com",
+  projectId: "canal-denuncias-poli26",
+  storageBucket: "canal-denuncias-poli26.firebasestorage.app",
+  messagingSenderId: "102848286523",
+  appId: "1:102848286523:web:4b539fe5ec3e15d7e3311e"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Referência à coleção "denuncias" no Firestore
 const denunciasRef = collection(db, "denuncias");
 
 // Pegando o formulário de envio
@@ -23,17 +39,16 @@ const form = document.getElementById("form-denuncia");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();  // Impede o comportamento padrão de recarregar a página
 
-  // Gerando o código aleatório para a denúncia
-  const codigoDenuncia = gerarCodigo(8);
-  // Gerando o código de acesso para o denunciante
-  const codigoAcesso = gerarCodigo(8);
+  // Gerando códigos aleatórios para a denúncia e para o acesso
+  const codigoDenuncia = gerarCodigo(8);  // Código de identificação da denúncia
+  const codigoAcesso = gerarCodigo(8);    // Código de acesso para o denunciante
 
   // Criando o objeto de dados da denúncia
   const denunciaData = {
-    descricao: form.descricao.value,
-    codigoDenuncia: codigoDenuncia,
-    codigoAcesso: codigoAcesso,
-    data: new Date(),
+    descricao: form.descricao.value,  // A descrição fornecida pelo denunciante
+    codigoDenuncia: codigoDenuncia,   // Código para identificar a denúncia
+    codigoAcesso: codigoAcesso,       // Código de acesso para o denunciante
+    data: new Date(),                 // Data de envio
   };
 
   try {
