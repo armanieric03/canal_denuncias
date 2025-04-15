@@ -16,31 +16,33 @@ function ativarCopiar() {
   });
 }
 
+// Listener do botão
 document.getElementById("btnCriar").addEventListener("click", async () => {
-  const codigo = Date.now().toString();
+  const codigo = Date.now().toString(); // código único
   const senhaDenunciante = gerarSenha();
   const senhaComissao = gerarSenha();
 
+  // Salvar no Firebase
   await set(ref(db, "chats/" + codigo), {
     senhaDenunciante,
     senhaComissao,
     mensagens: []
   });
 
-  // Mostra os dados
+  // Exibir na tela para o denunciante
   document.getElementById("codigoGerado").textContent = codigo;
   document.getElementById("senhaDenunciante").textContent = senhaDenunciante;
   document.getElementById("dadosChat").style.display = "block";
   ativarCopiar();
 
-  // Envia e-mail
+  // Enviar por e-mail via EmailJS
   emailjs.send("service_4xx4c18", "template_ze8hgtn", {
     chat_codigo: codigo,
     senha_comissao: senhaComissao
   }).then(() => {
-    console.log("E-mail enviado.");
-  }).catch(err => {
-    console.error("Erro ao enviar e-mail:", err);
-    alert("Erro ao enviar e-mail com a senha da comissão.");
+    console.log("E-mail enviado com sucesso.");
+  }).catch((error) => {
+    console.error("Erro ao enviar e-mail:", error);
+    alert("Erro ao enviar e-mail. Verifique sua configuração do EmailJS.");
   });
 });
