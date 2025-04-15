@@ -1,7 +1,8 @@
-// firebase-config.js
+// Configuração do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
+// Sua configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDDjD6VMIRxgDq13yXjMYeYI2b7-QqqdVI",
   authDomain: "canal-denuncias-poli26.firebaseapp.com",
@@ -12,5 +13,6 @@ const firebaseConfig = {
   appId: "1:102848286523:web:4b539fe5ec3e15d7e3311e"
 };
 
+// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getDatabase(app);
+const db = getDatabase(app);
