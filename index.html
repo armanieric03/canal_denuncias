@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -18,6 +19,12 @@
 
     <button type="submit">Enviar Denúncia</button>
   </form>
+
+  <!-- Exibir os códigos gerados -->
+  <div id="codigo-info" style="display: none;">
+    <p><strong>Código da Denúncia:</strong> <span id="codigo-denuncia"></span></p>
+    <p><strong>Código de Acesso:</strong> <span id="codigo-acesso"></span></p>
+  </div>
 
   <!-- Carregar os Scripts na Ordem Correta -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
