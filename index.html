@@ -1,31 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canal de Denúncias Anônimo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Anônimo</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #messages { height: 300px; overflow-y: scroll; margin-bottom: 20px; }
+        .message { padding: 5px; border-bottom: 1px solid #ccc; }
+        #sendMessage { width: 100%; padding: 10px; }
+    </style>
 </head>
 <body>
-  <h1>Canal de Denúncias Anônimas</h1>
+    <h2>Chat Anônimo</h2>
+    <div id="messages"></div>
+    <textarea id="sendMessage" placeholder="Digite sua mensagem..." rows="4"></textarea>
+    <button onclick="sendMessage()">Enviar</button>
 
-  <!-- Formulário de denúncia anônima -->
-  <form id="form-denuncia">
-    <label for="descricao">Descrição da Denúncia:</label>
-    <textarea id="descricao" name="descricao" required></textarea>
-
-    <button type="submit">Enviar Denúncia</button>
-  </form>
-
-  <!-- Exibir os códigos gerados após o envio -->
-  <div id="codigo-info" style="display: none;">
-    <p><strong>Código da Denúncia:</strong> <span id="codigo-denuncia"></span></p>
-    <p><strong>Código de Acesso:</strong> <span id="codigo-acesso"></span></p>
-  </div>
-
-  <!-- Carregar os Scripts na Ordem Correta -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <script src="firebase-config.js"></script> <!-- Arquivo de Configuração -->
-  <script src="script.js"></script> <!-- Script de Envio -->
+    <script src="chat.js"></script>
 </body>
 </html>
