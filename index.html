@@ -1,55 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Canal de Denúncias</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    (function () {
-      emailjs.init("34Qr07ENkW64L11KM"); // ⬅️ Substitua pela sua public key do EmailJS
-    })();
-  </script>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .box { border: 1px solid #ccc; padding: 20px; margin-top: 20px; }
-    label { display: block; margin-top: 10px; }
-    input { width: 100%; padding: 5px; margin-top: 5px; }
-    button { margin-top: 15px; padding: 10px 15px; }
-    .copiable { color: blue; text-decoration: underline; cursor: pointer; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .box { margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    .copiable { cursor: pointer; color: blue; text-decoration: underline; }
   </style>
 </head>
 <body>
   <h1>Canal de Denúncias</h1>
 
-  <!-- Criar novo chat -->
-  <div class="box">
-    <h2>Criar novo chat</h2>
-    <button id="btnCriar">Criar um novo chat</button>
-    <div id="dadosChat" style="display:none; margin-top: 10px;">
-      <p><strong>Código do Chat:</strong> <span id="codigoGerado" class="copiable"></span></p>
-      <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante" class="copiable"></span></p>
-      <p><strong>Senha da Comissão:</strong> enviada por e-mail</p>
-    </div>
+  <button id="btnCriar">Criar novo chat</button>
+
+  <div id="dadosChat" class="box" style="display: none;">
+    <p><strong>Código do chat:</strong> <span id="codigoGerado" class="copiable"></span></p>
+    <p><strong>Senha do denunciante:</strong> <span id="senhaDenunciante" class="copiable"></span></p>
+    <p><em>(Clique nos códigos para copiá-los)</em></p>
   </div>
 
-  <!-- Entrar em chat existente -->
-  <div class="box">
-    <h2>Entrar em chat existente</h2>
-    <form action="chat.html" method="GET">
-      <label for="codigoChat">Código do Chat:</label>
-      <input type="text" id="codigoChat" name="chat" required />
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("34Qr07ENkW64L11KM");
+  </script>
 
-      <label for="senhaAcesso">Senha de Acesso:</label>
-      <input type="password" id="senhaAcesso" name="senha" required />
-
-      <button type="submit">Entrar</button>
-    </form>
-  </div>
-
-  <script src="firebase-config.js" type="module"></script>
-  <script src="script.js" type="module"></script>
+  <!-- Scripts principais -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
