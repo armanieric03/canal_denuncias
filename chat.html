@@ -2,78 +2,71 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat Anônimo</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; }
-    #mensagens { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
-    #mensagens div { margin-bottom: 5px; }
+    #mensagens { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
     #chatContainer { display: none; }
   </style>
 </head>
 <body>
   <h1>Chat Anônimo</h1>
-
+  <div id="erro"></div>
   <div id="chatContainer">
     <div id="mensagens"></div>
-    <textarea id="mensagem" placeholder="Digite sua mensagem"></textarea>
-    <br/>
+    <textarea id="mensagem" placeholder="Digite sua mensagem"></textarea><br/>
     <button id="enviar">Enviar</button>
   </div>
 
-  <div id="erro"></div>
-
   <script src="firebase-config.js" type="module"></script>
   <script type="module">
-    import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
     import { db } from './firebase-config.js';
+    import { ref, onValue, push, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const chatId = urlParams.get("chat");
-    const senha = urlParams.get("senha");
+    const params = new URLSearchParams(window.location.search);
+    const chatId = params.get("chat");
+    const senha = params.get("senha");
+
+    const chatRef = ref(db, "chats/" + chatId);
+    const mensagensRef = ref(db, "chats/" + chatId + "/mensagens");
 
     const mensagensDiv = document.getElementById("mensagens");
-    const container = document.getElementById("chatContainer");
     const erroDiv = document.getElementById("erro");
+    const container = document.getElementById("chatContainer");
 
-    if (!chatId || !senha) {
-      erroDiv.textContent = "Código do chat ou senha não informados.";
-    } else {
-      const chatRef = ref(db, "chats/" + chatId);
+    get(chatRef).then(snapshot => {
+      if (!snapshot.exists()) {
+        erroDiv.textContent = "Chat não encontrado.";
+        return;
+      }
+      const chatData = snapshot.val();
+      if (senha !== chatData.senhaDenunciante && senha !== chatData.senhaComissao) {
+        erroDiv.textContent = "Senha incorreta.";
+        return;
+      }
 
-      get(chatRef).then(snapshot => {
-        if (!snapshot.exists()) {
-          erroDiv.textContent = "Chat não encontrado.";
-        } else {
-          const data = snapshot.val();
-          if (senha !== data.senhaDenunciante && senha !== data.senhaComissao) {
-            erroDiv.textContent = "Senha incorreta.";
-          } else {
-            container.style.display = "block";
-            const mensagensRef = ref(db, "chats/" + chatId + "/mensagens");
-            onValue(mensagensRef, snapshot => {
-              mensagensDiv.innerHTML = "";
-              snapshot.forEach(msg => {
-                const div = document.createElement("div");
-                div.textContent = msg.val().texto;
-                mensagensDiv.appendChild(div);
-              });
-              mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-            });
+      container.style.display = "block";
 
-            document.getElementById("enviar").onclick = () => {
-              const texto = document.getElementById("mensagem").value;
-              if (texto.trim()) {
-                push(mensagensRef, { texto });
-                document.getElementById("mensagem").value = "";
-              }
-            };
-          }
-        }
+      onValue(mensagensRef, snapshot => {
+        mensagensDiv.innerHTML = "";
+        snapshot.forEach(m => {
+          const div = document.createElement("div");
+          div.textContent = m.val().texto;
+          mensagensDiv.appendChild(div);
+        });
+        mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
       });
-    }
+
+      document.getElementById("enviar").onclick = () => {
+        const texto = document.getElementById("mensagem").value;
+        if (texto.trim()) {
+          push(mensagensRef, { texto });
+          document.getElementById("mensagem").value = "";
+        }
+      };
+    });
   </script>
 </body>
 </html>
