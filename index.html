@@ -30,33 +30,33 @@
   <script type="module">
     import { db } from "./firebase-config.js";
     import { ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
+  
     function gerarSenha() {
       return Math.random().toString(36).slice(-6);
     }
-
+  
     async function criarChat() {
       const codigo = Date.now().toString();
       const senha1 = gerarSenha();
       const senha2 = gerarSenha();
-
+  
       await set(ref(db, "chats/" + codigo), {
         senhaDenunciante: senha1,
         senhaComissao: senha2,
         mensagens: []
       });
-
-      // mostra os dados na tela
+  
+      // Mostra os dados na tela e remove qualquer alerta
       document.getElementById("dadosChat").style.display = "block";
       document.getElementById("codigoGerado").textContent = codigo;
       document.getElementById("senhaDenunciante").textContent = senha1;
       document.getElementById("senhaComissao").textContent = senha2;
     }
-
+  
     function entrarChat() {
       const codigo = document.getElementById("codigoChat").value.trim();
       const senha = document.getElementById("senha").value.trim();
-
+  
       if (codigo && senha) {
         sessionStorage.setItem("codigoChat", codigo);
         sessionStorage.setItem("senha", senha);
@@ -65,17 +65,22 @@
         alert("Preencha o código do chat e a senha.");
       }
     }
-
+  
+    // Função para copiar texto de um elemento pelo ID
     window.copiarTexto = function (id) {
       const texto = document.getElementById(id).textContent;
       navigator.clipboard.writeText(texto).then(() => {
-        alert("Copiado: " + texto);
+        const botao = document.querySelector(`[onclick="copiarTexto('${id}')"]`);
+        const textoOriginal = botao.textContent;
+        botao.textContent = "Copiado!";
+        setTimeout(() => { botao.textContent = textoOriginal; }, 1500);
       });
     };
-
+  
     document.getElementById("btnCriar").addEventListener("click", criarChat);
     document.getElementById("btnEntrar").addEventListener("click", entrarChat);
   </script>
+
 </body>
 
 </html>
