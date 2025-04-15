@@ -1,24 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Anônimo</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #messages { height: 300px; overflow-y: scroll; margin-bottom: 20px; }
-        .message { padding: 5px; border-bottom: 1px solid #ccc; }
-        #sendMessage { width: 100%; padding: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Canal de Denúncias</title>
 </head>
 <body>
-    <h2>Chat Anônimo</h2>
-    <div id="messages"></div>
-    <textarea id="sendMessage" placeholder="Digite sua mensagem..." rows="4"></textarea>
-    <button onclick="sendMessage()">Enviar</button>
+  <h2>Canal de Denúncias Anônimo</h2>
 
-    <script src="chat.js"></script>
+  <button onclick="criarChat()">Criar novo chat</button>
+  <br><br>
+  <input type="text" id="codigoChat" placeholder="Código do chat existente">
+  <input type="text" id="senha" placeholder="Senha de acesso">
+  <button onclick="entrarChat()">Entrar</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      databaseURL: "https://SEU_PROJETO.firebaseio.com",
+      projectId: "SEU_PROJETO",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function gerarSenha() {
+      return Math.random().toString(36).slice(-6);
+    }
+
+    window.criarChat = async function () {
+      const codigo = Date.now().toString();
+      const senhaDenunciante = gerarSenha();
+      const senhaComissao = gerarSenha();
+
+      const refChat = ref(db, "chats/" + codigo);
+      await set(refChat, {
+        senhaDenunciante,
+        senhaComissao,
+        mensagens: []
+      });
+
+      alert(`Chat criado com sucesso!\n\nCódigo do chat: ${codigo}\n\nSenha do denunciante: ${senhaDenunciante}\nSenha da comissão: ${senhaComissao}`);
+    };
+
+    window.entrarChat = function () {
+      const codigo = document.getElementById('codigoChat').value.trim();
+      const senha = document.getElementById('senha').value.trim();
+
+      if (codigo && senha) {
+        sessionStorage.setItem('codigoChat', codigo);
+        sessionStorage.setItem('senha', senha);
+        window.location.href = 'chat.html';
+      } else {
+        alert("Preencha o código do chat e a senha.");
+      }
+    };
+  </script>
 </body>
 </html>
