@@ -19,6 +19,7 @@
     input { width: 100%; padding: 5px; margin-top: 5px; }
     button { margin-top: 15px; padding: 10px 15px; }
     #dadosChat p { margin: 5px 0; }
+    .copiable { cursor: pointer; color: blue; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -29,9 +30,9 @@
     <h2>Criar novo chat</h2>
     <button id="btnCriar">Criar um novo chat</button>
     <div id="dadosChat" style="display:none;">
-      <p><strong>Código do Chat:</strong> <span id="codigoGerado"></span></p>
-      <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante"></span></p>
-      <p><strong>Senha da Comissão:</strong> <span id="senhaComissao"></span></p>
+      <p><strong>Código do Chat:</strong> <span id="codigoGerado" class="copiable"></span></p>
+      <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante" class="copiable"></span></p>
+      <p><strong>Senha da Comissão:</strong> Enviada por e-mail</p>
     </div>
   </div>
 
