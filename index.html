@@ -1,86 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Canal de Denúncias</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init("SEU_PUBLIC_KEY"); // Substitua pela sua Public Key
+    })();
+  </script>
 </head>
 <body>
-  <h2>Canal de Denúncias Anônimo</h2>
+  <h1>Canal de Denúncias</h1>
 
-  <button id="btnCriar">Criar novo chat</button>
-
-  <div id="dadosChat" style="display:none; margin-top: 20px;">
-    <p><strong>Código do Chat:</strong> <span id="codigoGerado"></span>
-      <button onclick="copiarTexto('codigoGerado')">Copiar</button>
-    </p>
-    <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante"></span>
-      <button onclick="copiarTexto('senhaDenunciante')">Copiar</button>
-    </p>
-    <p><strong>Senha da Comissão:</strong> <span id="senhaComissao"></span>
-      <button onclick="copiarTexto('senhaComissao')">Copiar</button>
-    </p>
+  <div>
+    <button id="btnCriar">Criar um novo chat</button>
   </div>
 
-  <hr>
+  <div id="dadosChat" style="display:none;">
+    <p><strong>Código do Chat:</strong> <span id="codigoGerado"></span></p>
+    <p><strong>Senha do Denunciante:</strong> <span id="senhaDenunciante"></span></p>
+    <p><strong>Senha da Comissão:</strong> <span id="senhaComissao"></span></p>
+  </div>
 
-  <input type="text" id="codigoChat" placeholder="Código do chat existente" />
-  <input type="text" id="senha" placeholder="Senha de acesso" />
-  <button id="btnEntrar">Entrar</button>
-
-  <script type="module">
-    import { db } from "./firebase-config.js";
-    import { ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-  
-    function gerarSenha() {
-      return Math.random().toString(36).slice(-6);
-    }
-  
-    async function criarChat() {
-      const codigo = Date.now().toString();
-      const senha1 = gerarSenha();
-      const senha2 = gerarSenha();
-  
-      await set(ref(db, "chats/" + codigo), {
-        senhaDenunciante: senha1,
-        senhaComissao: senha2,
-        mensagens: []
-      });
-  
-      // Mostra os dados na tela e remove qualquer alerta
-      document.getElementById("dadosChat").style.display = "block";
-      document.getElementById("codigoGerado").textContent = codigo;
-      document.getElementById("senhaDenunciante").textContent = senha1;
-      document.getElementById("senhaComissao").textContent = senha2;
-    }
-  
-    function entrarChat() {
-      const codigo = document.getElementById("codigoChat").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-  
-      if (codigo && senha) {
-        sessionStorage.setItem("codigoChat", codigo);
-        sessionStorage.setItem("senha", senha);
-        window.location.href = "chat.html";
-      } else {
-        alert("Preencha o código do chat e a senha.");
-      }
-    }
-  
-    // Função para copiar texto de um elemento pelo ID
-    window.copiarTexto = function (id) {
-      const texto = document.getElementById(id).textContent;
-      navigator.clipboard.writeText(texto).then(() => {
-        const botao = document.querySelector(`[onclick="copiarTexto('${id}')"]`);
-        const textoOriginal = botao.textContent;
-        botao.textContent = "Copiado!";
-        setTimeout(() => { botao.textContent = textoOriginal; }, 1500);
-      });
-    };
-  
-    document.getElementById("btnCriar").addEventListener("click", criarChat);
-    document.getElementById("btnEntrar").addEventListener("click", entrarChat);
-  </script>
-
+  <script src="script.js"></script>
 </body>
-
 </html>
