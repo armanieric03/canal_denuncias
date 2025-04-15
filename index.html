@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal de Denúncias Anônimo</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Canal de Denúncias Anônimo</h1>
+
+        <form id="denunciaForm">
+            <label for="denuncia">Sua Denúncia:</label>
+            <textarea id="denuncia" name="denuncia" rows="5" required></textarea>
+
+            <button type="submit">Enviar Denúncia</button>
+        </form>
+
+        <div class="id-info" id="id-info" style="display:none;">
+            <p><strong>ID da Denúncia:</strong> <span id="denunciaId"></span></p>
+            <p><strong>Código de Acesso:</strong> <span id="acessoCodigo"></span></p>
+        </div>
+    </div>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>
