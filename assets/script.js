@@ -1,14 +1,19 @@
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// script.js
 
-// Referência à coleção no Firestore
+// Referência ao Firestore
+const db = getFirestore();
+
+// Referência à coleção de denúncias
 const denunciasRef = collection(db, "denuncias");
 
-// Obtendo o formulário e capturando o evento de envio
+// Pegando o formulário
 const form = document.getElementById("form-denuncia");
 
+// Adicionando evento de submit ao formulário
 form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  e.preventDefault();  // Impede o comportamento padrão de recarregar a página
 
+  // Dados da denúncia
   const denunciaData = {
     nome: form.nome.value,
     descricao: form.descricao.value,
@@ -17,11 +22,11 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    // Enviando a denúncia para o Firestore
+    // Enviar os dados para o Firestore
     await addDoc(denunciasRef, denunciaData);
     alert("Denúncia enviada com sucesso!");
-    form.reset(); // Limpa o formulário
+    form.reset();  // Limpa os campos do formulário
   } catch (e) {
-    alert("Erro ao enviar denúncia: " + e.message);
+    alert("Erro ao enviar a denúncia: " + e.message);
   }
 });
