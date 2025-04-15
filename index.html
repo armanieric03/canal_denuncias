@@ -34,6 +34,7 @@
       return Math.random().toString(36).slice(-6);
     }
 
+    // ✅ Esta função precisa estar no window
     window.criarChat = async function () {
       const codigo = Date.now().toString();
       const senhaDenunciante = gerarSenha();
