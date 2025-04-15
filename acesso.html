@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso à Denúncia</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Acesso Restrito - Comissão</h1>
+
+        <form id="acessoForm">
+            <label for="idDenuncia">ID da Denúncia:</label>
+            <input type="text" id="idDenuncia" required>
+
+            <label for="codigoAcesso">Código de Acesso:</label>
+            <input type="password" id="codigoAcesso" required>
+
+            <button type="submit">Acessar Denúncia</button>
+        </form>
+
+        <div id="resultado" style="display:none;">
+            <h2>Denúncia:</h2>
+            <p id="conteudoDenuncia"></p>
+
+            <label for="resposta">Resposta da Comissão:</label>
+            <textarea id="resposta" rows="4"></textarea>
+            <button id="salvarResposta">Salvar Resposta</button>
+
+            <p id="respostaStatus" style="color: green; display: none;">Resposta salva com sucesso.</p>
+        </div>
+    </div>
+
+    <script src="assets/acesso.js"></script>
+</body>
+</html>
