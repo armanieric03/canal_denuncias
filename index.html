@@ -3,27 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <title>Canal de Denúncias</title>
+  <link rel="icon" href="data:,">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .box { margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
-    .copiable { cursor: pointer; color: blue; text-decoration: underline; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      padding: 20px; 
+      max-width: 800px; 
+      margin: 0 auto;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .box { 
+      margin-top: 20px; 
+      padding: 20px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .copiable { 
+      cursor: pointer; 
+      color: #4285f4; 
+      text-decoration: underline;
+      padding: 2px 5px;
+      background-color: #f5f5f5;
+      border-radius: 3px;
+    }
+    .login-section { margin-top: 20px; }
+    .login-form { 
+      margin-bottom: 25px;
+      padding: 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .tabs { 
+      display: flex; 
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab { 
+      padding: 12px 20px; 
+      cursor: pointer; 
+      background: #f1f1f1; 
+      border: 1px solid #ccc;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+      transition: background-color 0.2s;
+    }
+    .tab:hover {
+      background-color: #e0e0e0;
+    }
+    .tab.active { 
+      background: #fff; 
+      border-bottom: 1px solid white;
+      position: relative;
+      bottom: -1px;
+      font-weight: bold;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    label {
+      font-weight: bold;
+      color: #555;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .loading::after {
+      content: "⏳";
+      animation: loading 1.5s infinite;
+      font-size: 20px;
+    }
+    @keyframes loading {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    .success-message {
+      color: #4CAF50;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    .error-message {
+      color: #d32f2f;
+      font-weight: bold;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>Canal de Denúncias</h1>
+  <h1>Canal de Denúncias Anônimas</h1>
 
-  <button id="btnCriar">Criar novo chat</button>
+  <div class="tabs">
+    <div class="tab active" data-tab="novo-chat">Criar Denúncia</div>
+    <div class="tab" data-tab="login">Acessar Chat</div>
+  </div>
 
-  <div id="dadosChat" class="box" style="display: none;">
-    <p><strong>Código do chat:</strong> <span id="codigoGerado" class="copiable"></span></p>
-    <p><strong>Senha do denunciante:</strong> <span id="senhaDenunciante" class="copiable"></span></p>
-    <p><em>(Clique nos códigos para copiá-los)</em></p>
+  <div id="novo-chat" class="tab-content active">
+    <button id="btnCriar">Criar novo chat de denúncia</button>
+    <div id="loading" class="loading"></div>
+
+    <div id="dadosChat" class="box" style="display: none;">
+      <h3>Dados da Denúncia</h3>
+      <div class="form-group">
+        <label>Código do chat:</label>
+        <div><span id="codigoGerado" class="copiable"></span></div>
+      </div>
+      <div class="form-group">
+        <label>Senha do denunciante:</label>
+        <div><span id="senhaDenunciante" class="copiable"></span></div>
+      </div>
+      <p><em>Clique nos códigos para copiá-los</em></p>
+      <p><strong>Importante:</strong> Guarde estas informações para acessar o chat posteriormente. Elas não poderão ser recuperadas.</p>
+    </div>
+  </div>
+
+  <div id="login" class="tab-content">
+    <div class="login-section">
+      <h2>Acessar Chat Existente</h2>
+      
+      <div class="login-form">
+        <h3>Login como Denunciante</h3>
+        <form id="formDenunciante">
+          <div class="form-group">
+            <label for="codigoDenunciante">Código do Chat:</label>
+            <input type="text" id="codigoDenunciante" required placeholder="Digite o código do chat">
+          </div>
+          <div class="form-group">
+            <label for="senhaDenuncianteLogin">Senha do Denunciante:</label>
+            <input type="password" id="senhaDenuncianteLogin" required placeholder="Digite sua senha">
+          </div>
+          <button type="submit">Acessar como Denunciante</button>
+        </form>
+      </div>
+      
+      <div class="login-form">
+        <h3>Login como Comissão</h3>
+        <form id="formComissao">
+          <div class="form-group">
+            <label for="codigoComissao">Código do Chat:</label>
+            <input type="text" id="codigoComissao" required placeholder="Digite o código do chat">
+          </div>
+          <div class="form-group">
+            <label for="senhaComissaoLogin">Senha da Comissão:</label>
+            <input type="password" id="senhaComissaoLogin" required placeholder="Digite sua senha">
+          </div>
+          <button type="submit">Acessar como Comissão</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!-- EmailJS SDK -->
+  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("34Qr07ENkW64L11KM");
+    (function() {
+      // Inicializar com o User ID
+      emailjs.init("34Qr07ENkW64L11KM");
+      
+      // Configuração do email da comissão
+      window.EMAIL_COMISSAO = "armanieric03@gmail.com";
+      
+      // Verificar se o EmailJS está inicializado corretamente
+      console.log("EmailJS inicializado");
+    })();
   </script>
 
   <!-- Scripts principais -->
